@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body{
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <canvas></canvas>
+
+  <script>
+    var canvas = document.querySelector('canvas');
+    var ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener('mousemove', function(target){
+      mouse.x = target.x;
+      mouse.y = target.y;
+    })
+
+    function Particle(x, y, velocity, radius, radians, distance, color)
+    {
+      this.x = x;
+      this.y = y;
+      this.velocity = velocity;
+      this.radius = radius;
+      this.radians = radians;
+      this.distance = distance;
+      this.lastPoint = {
+        x: this.x,
+        y: this.y
+      }
+      this.lastMouse = {
+        x: this.x,
+        y: this.y
+      }
+      this.color = color;
+
+      this.draw = function()
+      {
+        ctx.beginPath();
+        ctx.lineWidth = this.radius;
+        ctx.strokeStyle = color;
+        ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
+        ctx.lineTo(this.x, this.y);
+        ctx.stroke();
+        ctx.closePath();
+      }
+
+      this.update = function()
+      {
+        this.radians += this.velocity;
+        this.lastMouse.x += (mouse.x - this.lastMouse.x) * 0.5;
+        this.lastMouse.y += (mouse.y - this.lastMouse.y) * 0.5;
+
+        console.log(this.lastMouse);
+
+        this.lastPoint.x = this.x;
+        this.lastPoint.y = this.y;
+
+        this.x = mouse.x + Math.cos(this.radians) * this.distance;
+        this.y = mouse.y + Math.sin(this.radians) * this.distance;
+
+        this.draw();
+      }
+    }
+
+    let particles;
+    let mouse = {
+      x: undefined,
+      y: undefined
+    };
+    const colors = ['blue'];
+
+    function init()
+    {
+      particles = [];
+
+      let previousDistance = 50;
+      for(let i = 0; i < 50; i++)
+      {
+        let x = canvas.width / 2;
+        let y = canvas.height / 2;
+        let velocity = 0.05;
+        let radians = Math.random() * 2 * Math.PI;
+        let color = colors[0];
+        let radius = Math.random() * 2 + 1;
+
+        particles.push(new Particle(x, y, velocity, radius, radians, previousDistance, color));
+
+        previousDistance += radius;
+      }
+    }
+
+    function animate()
+    {
+      requestAnimationFrame(animate);
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for(let i = 0; i < 50; i++)
+        particles[i].update();
+    }
+
+    init();
+    animate();
+  </script>
+</body>
+</html>
