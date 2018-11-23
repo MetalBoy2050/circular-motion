@@ -59,16 +59,14 @@
       this.update = function()
       {
         this.radians += this.velocity;
-        this.lastMouse.x += (mouse.x - this.lastMouse.x) * 0.5;
-        this.lastMouse.y += (mouse.y - this.lastMouse.y) * 0.5;
-
-        console.log(this.lastMouse);
+        this.lastMouse.x += (mouse.x - this.lastMouse.x) * 0.05;
+        this.lastMouse.y += (mouse.y - this.lastMouse.y) * 0.05;
 
         this.lastPoint.x = this.x;
         this.lastPoint.y = this.y;
 
-        this.x = mouse.x + Math.cos(this.radians) * this.distance;
-        this.y = mouse.y + Math.sin(this.radians) * this.distance;
+        this.x = this.lastMouse.x + Math.cos(this.radians) * this.distance;
+        this.y = this.lastMouse.y + Math.sin(this.radians) * this.distance;
 
         this.draw();
       }
@@ -76,8 +74,8 @@
 
     let particles;
     let mouse = {
-      x: undefined,
-      y: undefined
+      x: canvas.width / 2,
+      y: canvas.height / 2
     };
     const colors = ['blue'];
 
